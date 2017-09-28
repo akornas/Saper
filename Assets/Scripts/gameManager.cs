@@ -11,6 +11,7 @@ public class gameManager : MonoBehaviour {
     public GameObject _game_panel;
     public GameObject _end_panel;
     public GameObject _highscore_panel;
+    public GameObject _checkMarks_button;
     public Text difficulty_description;
     private int currentDifficultySelected = 0;
     private string difficultySelectedStr;
@@ -122,6 +123,14 @@ public class gameManager : MonoBehaviour {
     public void _updateMinesChecked()
     {
         _mines_txt.text = _mines_checked.ToString() + "/" + mines.ToString();
+        if (_mines_checked == mines)
+        {
+            _checkMarks_button.SetActive(true);
+        }
+        else
+        {
+            _checkMarks_button.SetActive(false);
+        }
         if (_fields_uncovered >= board_size_x * board_size_y - mines)
         {
             _endGame(1);
@@ -329,5 +338,21 @@ public class gameManager : MonoBehaviour {
         PlayerPrefs.DeleteAll();
         checkIsHighscoreExists();
         _setHighScoreValues(difficultySelectedStr);
+    }
+
+    public void _checkMarks()
+    {
+        for (int y = 0; y < board_size_y; y++)
+        {
+            for (int x = 0; x < board_size_x; x++)
+            {
+                if (game_board[x, y]._haveMine && game_board[x, y]._state != 2)
+                {
+                    _endGame(0);
+                    return;
+                }
+            }
+        }
+        _endGame(1);
     }
 }
